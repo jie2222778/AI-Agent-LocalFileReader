@@ -1,11 +1,22 @@
 
+
 .env
+*.env
+
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.log
+
+
 venv/
 .venv/
-*.docx
-*.txt
+
+*.log
+
+workspace/*.txt
+workspace/*.docx
+
+
+.DS_Store
+Thumbs.db
