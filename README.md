@@ -1,27 +1,31 @@
 # AI‑Agent‑LocalFileReader
-> 轻量级单文件AI Agent，基于大模型实现本地文档自动读取问答。
-软件工程学生课程/简历Demo项目，单人独立实现。
+> 轻量级具备工具调用能力的AI Agent，单人Python项目，软件工程简历Demo。
 
 ## 📖 项目介绍
-传统ChatGPT无法访问你电脑本地文件。
-本AI Agent实现**工具调用能力**：
-用户提问后，Agent自主判断是否需要读取本地txt / docx(Word)文档；
-调用本地Python工具读取磁盘文件，把文档内容交给大模型，完成总结、问答。
+普通大模型无法访问电脑本地磁盘文件。
+本项目实现一个简易AI Agent：
+1. **AI能力体现**：接入OpenAI大模型(gpt‑3.5‑turbo)，大模型自主思考：判断用户问题是否需要读取本地文档；输出JSON工具调用指令。
+2. Python中间人循环（Agent核心）：解析LLM输出的JSON指令，调用本地文件解析工具；读取文档后，将文档内容再次送入大模型完成总结、问答。
+3. 安全限制：强制限定仅可读取`workspace`文件夹内文件，禁止访问电脑其他目录，规避文件越权访问风险。
+4. 完备异常处理：处理文件不存在、权限不足、编码异常、空文件等场景，输出友好提示，程序不会直接崩溃。
 
-核心模块：
-1. 工具层：read_txt / read_docx，负责读取本地文档
-2. Tool描述清单：给大模型的工具说明书，描述工具能力与入参
-3. 工具映射表：字符串工具名映射到真实Python函数
-4. Agent循环中间人逻辑：多次与大模型交互，完成工具调用闭环
+> ⚠️ 当前支持文件格式：`.txt`、`.docx`(Word)，**暂不支持PDF、Excel**。
 
-> 技术要点：LLM工具调用、Prompt工程、对话记忆管理、文件解析、环境变量管理。
+### Agent完整工作链路
+1. 用户输入自然语言提问
+2. 系统提示词把工具说明书交给大模型
+3. LLM自主决策：需要读文件则输出JSON工具调用；不需要工具直接输出答案
+4. Python中间层校验文件路径安全性，调用对应读取工具
+5. 将读取结果（或错误信息）追加进对话记忆，再次交给大模型
+6. 大模型基于文档内容输出最终回答
 
 ## 🛠 技术栈
 - Python 3.10+
-- openai sdk
-- python‑docx（解析Word文档）
-- python‑dotenv（管理密钥）
+- OpenAI SDK：对接大模型，实现Agent思考决策
+- python‑docx：解析docx Word文档
+- python‑dotenv：密钥环境变量管理
+- 知识点：LLM工具调用、Prompt工程、对话记忆管理、文件IO、路径安全校验、异常处理
 
 ## 📦 安装依赖
 ```bash
-pip install openai python‑docx python‑dotenv
+pip install -r requirements.txt
